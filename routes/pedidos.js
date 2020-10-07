@@ -3,15 +3,24 @@ const router = express.Router()
 
 //retorna todos os pedidos
 router.get('/', (req, res, next) => {
+
+
     res.status(200).send({
-        mensagem:'Retorna todos os pedidos'
+        mensagem:'Retorna todos os pedidos',
+       
     })
 })
 
 //insere um pedido
 router.post('/', (req, res, next) => {
+        //criando objeto literal pedido
+        const pedido = {
+            id_produto: req.body.id_produto,
+            quantidade: req.body.quantidade
+        }
     res.status(201).send({
-        mensagem: 'POST na rota de pedidos'
+        mensagem: 'POST na rota de pedidos',
+        pedido_criado: pedido
     })
 })
 

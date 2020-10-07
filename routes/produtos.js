@@ -10,8 +10,15 @@ router.get('/', (req, res, next) => {
 
 //insere um produto
 router.post('/', (req, res, next) => {
+
+    //criando objeto literal produto
+    const produto = {
+        nome: req.body.nome,
+        preco: req.body.preco,
+    }
     res.status(201).send({
-        mensagem: 'POST na rota de produtos'
+        mensagem: 'POST na rota de produtos',
+        produtoCriado: produto
     })
 })
 
