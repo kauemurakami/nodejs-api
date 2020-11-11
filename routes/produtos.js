@@ -98,9 +98,21 @@ router.patch('/', (req, res, next) => {
             [req.body.nome, req.body.preco, req.body.id_produto],
             (error, result, field) => {
                 conn.release()
-                res.status(202).send({
-                    mensagem: 'Produto editado com sucesso',
-                })
+                if(error) {return res.status(500).send({error : error})}
+                const response = {                 
+                      mensagem: 'Produto atualizado com sucesso',
+                      produtoAtualizado:{
+                        id_produto: req.body.id_produto,
+                        nome: req.body.nome,
+                        preco: req.body.preco,
+                        request: {
+                          tipo: 'PATCH',
+                          descricao:'Atualiza um produto',
+                          url: 'http://localhost:3000/produtos/' + req.body.id_produto
+                        }
+                      }
+                    }
+                return res.status(202).send({response})
             }
         )
     })
@@ -115,9 +127,19 @@ router.delete('/', (req, res, next) => {
             [req.body.id_produto],
             (error, result, field) => {
                 conn.release()
-                res.status(202).send({
-                    mensagem: 'Produto deletado com sucesso',
-                })
+                const response = {
+                  mensagem: 'Produto removido com sucesso',
+                  request: {
+                    tipo: 'DELETE',
+                    descricao: 'Remove um produto por id',
+                    url: 'http://localhost:3000/produtos/',
+                    body: {
+                      "nome": 'String',
+                      "preco" : 'Float',
+                    }
+                  }
+                }
+                res.status(202).send(response)
             }
         )
     })
