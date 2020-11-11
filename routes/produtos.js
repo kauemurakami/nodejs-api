@@ -10,7 +10,22 @@ router.get('/', (req, res, next) => {
         conn.query('SELECT * FROM produtos', 
         (error, result, field) => {
             if(error){return res.status(500).send({ error:error })}
-            return res.status(200).send({produtos:result})
+            const response = {
+              quantidade: result.length,
+              produtos: result.map(prod => {
+                return {
+                  id_produto: prod.id_produto,
+                  nome: prod.nome,
+                  preco: prod.preco,
+                  request: {
+                    tipo: 'GET',
+                    descricao:'Recupera todos os produtos',
+                    url: 'http://localhost:3000/produtos/' + prod.id_produto
+                  }
+                }
+              })
+            }
+            return res.status(200).send({response})
         })
     })
 })
@@ -24,10 +39,20 @@ router.post('/', (req, res, next) => {
             [req.body.nome, req.body.preco],
             (error, result, field) => {
                 conn.release()
-                res.status(201).send({
-                    mensagem: 'Produto inserido com sucesso',
-                    id_produto: result.insertId
-                })
+                const response = {
+                  mensagem: 'Produto inserido com sucesso!',
+                  produtoCriado: {
+                    id_produto: result.id_produto,
+                    nome: req.body.nome,
+                    preco: req.body.preco,
+                    request: {
+                      tipo: 'POST',
+                      descricao: 'Insere um produto',
+                      url: 'http://localhost:3000/produtos',
+                    }
+                  }
+                }
+                return res.status(201).send(response)
             }
         )
     })
@@ -42,6 +67,23 @@ router.get('/:id_produto', (req, res, next) => {
         [req.params.id_produto], 
         (error, result, field) => {
             if(error){return res.status(500).send({ error:error })}
+            if(result.length == 0){
+              return res.status(404).send({
+                mensagem: 'Não foi encontrado produto com este id'
+              })
+            }
+            const response = {
+              produto: {
+                id_produto: result[0].id_produto,
+                nome: result[0].nome,
+                preco: result[0].preco,
+                request: {
+                  tipo: 'GET',
+                  descricao: 'Recupera produto de determinado id',
+                  url: 'http://localhost:3000/produtos',
+                }
+              }
+            }
             return res.status(200).send({produtos:result})
         })
     })
